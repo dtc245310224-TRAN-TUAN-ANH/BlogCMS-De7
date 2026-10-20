@@ -1,0 +1,9 @@
+.env
+secrets/*
+!secrets/.gitkeep
+app/node_modules/
+node_modules/
+backups/
+evidence/private/
+*.log
+.DS_Store

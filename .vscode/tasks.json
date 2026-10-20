@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CMS: Khởi động",
+      "type": "shell",
+      "command": "docker compose up -d --build",
+      "problemMatcher": []
+    },
+    {
+      "label": "CMS: Trạng thái",
+      "type": "shell",
+      "command": "docker compose ps",
+      "problemMatcher": []
+    },
+    {
+      "label": "CMS: Xem log",
+      "type": "shell",
+      "command": "docker compose logs -f --tail=100",
+      "problemMatcher": []
+    },
+    {
+      "label": "CMS: Dừng",
+      "type": "shell",
+      "command": "docker compose down",
+      "problemMatcher": []
+    }
+  ]
+}

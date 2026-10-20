@@ -1,0 +1,20 @@
+{
+  "name": "mach-nguon-blog-cms",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.1",
+    "express-session": "1.18.2",
+    "mysql2": "3.24.6",
+    "prom-client": "15.1.3"
+  }
+}

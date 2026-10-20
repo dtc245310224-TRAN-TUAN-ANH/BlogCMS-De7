@@ -1,0 +1,50 @@
+[
+  {
+    "category": "Container",
+    "title": "Container là gì và vì sao hữu ích khi triển khai web",
+    "slug": "container-la-gi",
+    "excerpt": "Một cách đóng gói ứng dụng giúp môi trường phát triển và triển khai nhất quán hơn.",
+    "content": "Container là một tiến trình được cô lập cùng những thành phần cần thiết để chạy ứng dụng. Nhiều container trên cùng máy chủ chia sẻ nhân hệ điều hành; máy ảo thường có hệ điều hành khách riêng.\n\nVới một website có ứng dụng và database, tách từng thành phần thành container giúp quản lý phiên bản và vòng đời riêng. Docker image là bản đóng gói dùng để tạo container; dữ liệu cần giữ lâu dài nên đặt trong volume.\n\nTrong dự án này, thay đổi mã Node.js cần build lại image ứng dụng. Khởi động lại container không đồng nghĩa với xóa dữ liệu MySQL, vì database nằm trên volume riêng. Đây là cách áp dụng kiến thức vào bài thực hành, không phải lời bảo đảm rằng mọi container đều an toàn tuyệt đối.",
+    "source_url": "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/"
+  },
+  {
+    "category": "Hạ tầng web",
+    "title": "Nginx reverse proxy đứng ở đâu trong một website",
+    "slug": "nginx-reverse-proxy",
+    "excerpt": "Theo dõi đường đi của một yêu cầu từ trình duyệt đến ứng dụng phía sau Nginx.",
+    "content": "Reverse proxy nhận yêu cầu của người dùng rồi chuyển tiếp tới máy chủ phía sau. Trong Nginx, chỉ thị proxy_pass xác định địa chỉ upstream. Các header chuyển tiếp giúp ứng dụng nhận biết host và giao thức của yêu cầu.\n\nVới Blog CMS này, trình duyệt gọi localhost:8080. Nginx chuyển tiếp tới web:3000 trong mạng Compose. Tên web là tên dịch vụ nội bộ, không phải địa chỉ mà người đọc blog cần nhập.\n\nCổng metrics của ứng dụng không được Nginx chuyển tiếp. Security headers được thêm vào phản hồi để hạn chế một số hành vi của trình duyệt. HTTPS vẫn là bước cần bổ sung trước khi dùng website qua mạng công cộng.",
+    "source_url": "https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/"
+  },
+  {
+    "category": "Dữ liệu",
+    "title": "InnoDB và vai trò của giao dịch trong MySQL",
+    "slug": "innodb-giao-dich",
+    "excerpt": "Hiểu cách giao dịch và khóa ngoại hỗ trợ tính nhất quán của dữ liệu bài viết.",
+    "content": "InnoDB là storage engine của MySQL có hỗ trợ giao dịch và khóa ngoại. Một giao dịch gom nhiều thao tác thành một đơn vị xử lý; commit ghi nhận thay đổi, còn rollback hủy các thay đổi chưa được xác nhận.\n\nKhóa ngoại giúp ràng buộc quan hệ giữa bảng. Trong CMS, mỗi bài viết tham chiếu một danh mục và một tác giả. Khi danh mục còn bài viết, hệ thống chặn việc xóa để tránh tham chiếu bị mất.\n\nViệc khởi tạo dữ liệu trong ứng dụng này sử dụng giao dịch. Người quản trị cần sao lưu trước khi thực hiện thay đổi cấu trúc hoặc xử lý dữ liệu quan trọng. Giao dịch và bản sao lưu giải quyết những nhu cầu khác nhau.",
+    "source_url": "https://dev.mysql.com/doc/refman/8.4/en/innodb-introduction.html"
+  },
+  {
+    "category": "Quan sát hệ thống",
+    "title": "Prometheus thu thập metrics như thế nào",
+    "slug": "prometheus-metrics",
+    "excerpt": "Từ endpoint metrics đến biểu đồ theo dõi CPU, HTTP và MySQL.",
+    "content": "Prometheus lưu các chuỗi thời gian gồm tên metric, nhãn và các mẫu giá trị theo thời gian. Máy chủ thường chủ động lấy dữ liệu từ endpoint HTTP của target theo chu kỳ.\n\nExporter chuyển thông tin của một thành phần thành định dạng mà Prometheus có thể thu thập. Trong bộ bài tập, cAdvisor cung cấp tài nguyên container, Nginx Exporter cung cấp trạng thái web server và MySQL Exporter cung cấp số liệu database.\n\nMetric up cho biết lần thu thập gần nhất có thành công hay không. Nó không tự chứng minh toàn bộ chức năng website hoạt động đúng. Vì vậy cần kết hợp biểu đồ với thao tác đọc bài, đăng nhập và ghi dữ liệu để đánh giá hệ thống.",
+    "source_url": "https://prometheus.io/docs/introduction/overview/"
+  },
+  {
+    "category": "Bảo mật",
+    "title": "Vì sao không lưu mật khẩu dưới dạng văn bản thuần",
+    "slug": "luu-mat-khau-an-toan",
+    "excerpt": "Hash mật khẩu, salt và những quyết định bảo mật trong một CMS nhỏ.",
+    "content": "Mật khẩu người dùng nên được xử lý bằng thuật toán chuyên dụng cho lưu trữ mật khẩu. Salt ngẫu nhiên giúp hai người dùng có cùng mật khẩu không nhất thiết có cùng giá trị hash.\n\nOWASP khuyến nghị Argon2id; khi không có Argon2id, scrypt là một lựa chọn được đề cập. CMS này sử dụng scrypt với N bằng 131072, r bằng 8 và p bằng 1, cùng salt riêng cho từng mật khẩu.\n\nHash không thay thế cho các lớp bảo vệ khác. Dự án giới hạn số lần đăng nhập, dùng cookie HttpOnly và kiểm tra CSRF cho thao tác thay đổi dữ liệu. Mật khẩu triển khai được sinh ngẫu nhiên, lưu riêng trên máy và loại khỏi Git.",
+    "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+  },
+  {
+    "category": "Container",
+    "title": "Mạng Docker Compose kết nối các dịch vụ ra sao",
+    "slug": "docker-compose-network",
+    "excerpt": "Tên service, cổng nội bộ và cách giảm số cổng phải mở ra máy chủ.",
+    "content": "Các dịch vụ cùng mạng Compose có thể tìm nhau thông qua tên service. Giao tiếp giữa container dùng cổng của dịch vụ trong container, không cần đi vòng qua cổng đã publish trên host.\n\nBlog CMS chia mạng thành frontend, backend và monitoring. MySQL tham gia backend; mạng này được đặt internal. Ứng dụng và công cụ quản trị DB chỉ tham gia những mạng cần dùng.\n\nMySQL không publish cổng 3306. phpMyAdmin là lối truy cập có giao diện để xem dữ liệu và chỉ được mở trên địa chỉ loopback của máy chạy Docker. Phân tách mạng giúp giới hạn đường kết nối nhưng vẫn phải kết hợp xác thực và quyền database.",
+    "source_url": "https://docs.docker.com/compose/how-tos/networking/"
+  }
+]

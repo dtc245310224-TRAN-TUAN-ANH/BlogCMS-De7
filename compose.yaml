@@ -1,0 +1,100 @@
+name: ${COMPOSE_PROJECT_NAME:-blogcms-de7}
+x-common: &common
+  restart: unless-stopped
+  security_opt: ["no-new-privileges:true"]
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+
+services:
+  mysql:
+    <<: *common
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: blogcms
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run setup first}
+      APP_DB_PASSWORD: ${DB_PASSWORD:?Run setup first}
+      EXPORTER_PASSWORD: ${EXPORTER_PASSWORD:?Run setup first}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db/01-init.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
+      - ./db/schema.sql:/schema.sql:ro
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$APP_DB_PASSWORD mysql --protocol=tcp -h127.0.0.1 -ucms_app blogcms -e 'SELECT 1 FROM users LIMIT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+    mem_limit: 1g
+    pids_limit: 256
+  web:
+    <<: *common
+    build: ./app
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_PASSWORD: ${DB_PASSWORD:?Run setup first}
+      SESSION_SECRET: ${SESSION_SECRET:?Run setup first}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@blog.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Run setup first}
+      COOKIE_SECURE: "false"
+    depends_on:
+      mysql: {condition: service_healthy}
+    networks: [frontend, backend, monitoring]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    volumes: [app-logs:/app/logs]
+    mem_limit: 512m
+    pids_limit: 100
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  nginx:
+    <<: *common
+    build: ./nginx
+    ports: ["127.0.0.1:8080:8080"]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy-common.conf:/etc/nginx/proxy-common.conf:ro
+      - nginx-logs:/logs
+    depends_on:
+      web: {condition: service_healthy}
+    networks: [frontend, monitoring]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      retries: 5
+  phpmyadmin:
+    <<: *common
+    image: phpmyadmin:5.2.2-apache
+    environment:
+      PMA_HOST: mysql
+      PMA_ARBITRARY: "0"
+      UPLOAD_LIMIT: 32M
+    ports: ["127.0.0.1:8081:80"]
+    depends_on:
+      mysql: {condition: service_healthy}
+    networks: [backend, tools]
+    mem_limit: 256m
+
+networks:
+  frontend:
+  backend:
+    internal: true
+  monitoring:
+  tools:
+volumes:
+  mysql-data:
+  app-logs:
+  nginx-logs:
+  prometheus-data:
+  grafana-data:
+  loki-data:
