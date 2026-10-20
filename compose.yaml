@@ -84,6 +84,72 @@ services:
       mysql: {condition: service_healthy}
     networks: [backend, tools]
     mem_limit: 256m
+  prometheus:
+    <<: *common
+    image: prom/prometheus:v3.2.1
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--storage.tsdb.retention.time=7d"]
+    ports: ["127.0.0.1:9090:9090"]
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    networks: [monitoring]
+    mem_limit: 512m
+    cap_drop: [ALL]
+  grafana:
+    <<: *common
+    image: grafana/grafana:11.6.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?Run setup first}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_PLUGINS_PREINSTALL_DISABLED: "true"
+      GF_PLUGINS_DISABLE_PLUGINS: grafana-lokiexplore-app,grafana-pyroscope-app,grafana-exploretraces-app,grafana-metricsdrilldown-app
+    ports: ["127.0.0.1:3000:3000"]
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks: [monitoring]
+    cap_drop: [ALL]
+    mem_limit: 512m
+  cadvisor:
+    restart: unless-stopped
+    image: ghcr.io/google/cadvisor:0.60.6
+    privileged: true
+    command: ["--docker_only=true", "--housekeeping_interval=30s"]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    networks: [monitoring]
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  nginx-exporter:
+    <<: *common
+    image: nginx/nginx-prometheus-exporter:1.4.1
+    command: ["--nginx.scrape-uri=http://nginx:8081/stub_status"]
+    networks: [monitoring]
+    cap_drop: [ALL]
+    read_only: true
+    mem_limit: 64m
+  mysql-exporter:
+    <<: *common
+    image: prom/mysqld-exporter:v0.17.2
+    command: ["--config.my-cnf=/etc/mysql/exporter.cnf"]
+    volumes: ["./secrets/exporter.cnf:/etc/mysql/exporter.cnf:ro"]
+    networks: [backend, monitoring]
+    depends_on:
+      mysql: {condition: service_healthy}
+    cap_drop: [ALL]
+    read_only: true
+    mem_limit: 64m
 
 networks:
   frontend:

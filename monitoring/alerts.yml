@@ -1,0 +1,18 @@
+groups:
+  - name: blog-cms
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels: {severity: warning}
+        annotations: {summary: "Scrape target unavailable for 2 minutes"}
+      - alert: MySQLUnavailable
+        expr: mysql_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: "MySQL exporter cannot connect to database"}
+      - alert: NginxUnavailable
+        expr: nginx_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: "Nginx exporter cannot read stub_status"}
