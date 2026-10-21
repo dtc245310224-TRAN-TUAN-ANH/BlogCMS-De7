@@ -1,0 +1,31 @@
+PASS MySQL health through Nginx
+PASS Nginx security headers
+PASS published articles seeded
+PASS search
+PASS anonymous admin access denied
+PASS CSRF missing rejected
+PASS admin login
+PASS category create
+PASS draft create
+PASS draft hidden from public
+PASS publish post
+PASS published visible
+PASS foreign key protects category
+PASS unsafe source rejected
+PASS user create
+PASS editor login
+PASS editor cannot change another author
+PASS editor cannot list users
+PASS editor cannot manage categories
+PASS user update
+PASS password update invalidates sessions
+PASS category update
+PASS SQL injection treated as text
+PASS metrics not exposed through public proxy
+PASS missing route produces 404 log
+PASS delete test post
+PASS delete test category
+PASS delete test user
+PASS logout
+PASS logged out session denied
+{"result":"PASS","checks":30,"time":"2026-10-20T14:32:45.711Z"}

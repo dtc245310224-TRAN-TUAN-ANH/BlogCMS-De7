@@ -1,0 +1,12 @@
+NAME                           IMAGE                                                                     COMMAND                  SERVICE          CREATED              STATUS                        PORTS
+blogcms-de7-cadvisor-1         ghcr.io/google/cadvisor:0.60.6                                            "/usr/bin/entrypoint…"   cadvisor         2 minutes ago        Up 2 minutes (healthy)        8080/tcp
+blogcms-de7-grafana-1          grafana/grafana:11.6.0                                                    "/run.sh"                grafana          6 minutes ago        Up 6 minutes                  127.0.0.1:3000->3000/tcp
+blogcms-de7-loki-1             grafana/loki:3.4.2                                                        "/usr/bin/loki -conf…"   loki             6 minutes ago        Up 6 minutes                  3100/tcp
+blogcms-de7-mysql-1            mysql:8.4                                                                 "docker-entrypoint.s…"   mysql            6 minutes ago        Up 6 minutes (healthy)        3306/tcp, 33060/tcp
+blogcms-de7-mysql-exporter-1   prom/mysqld-exporter:v0.17.2                                              "/bin/mysqld_exporte…"   mysql-exporter   6 minutes ago        Up 6 minutes                  9104/tcp
+blogcms-de7-nginx-1            sha256:ff03b437cbda72d8eb06f9b7ed693613b114ecaea275d774cc383ad42f780911   "nginx -g 'daemon of…"   nginx            6 minutes ago        Up 2 minutes (healthy)        127.0.0.1:8080->8080/tcp
+blogcms-de7-nginx-exporter-1   nginx/nginx-prometheus-exporter:1.4.1                                     "/usr/bin/nginx-prom…"   nginx-exporter   6 minutes ago        Up 6 minutes                  
+blogcms-de7-phpmyadmin-1       phpmyadmin:5.2.2-apache                                                   "/docker-entrypoint.…"   phpmyadmin       6 minutes ago        Up 6 minutes                  127.0.0.1:8081->80/tcp
+blogcms-de7-prometheus-1       prom/prometheus:v3.2.1                                                    "/bin/prometheus --c…"   prometheus       6 minutes ago        Up 6 minutes                  127.0.0.1:9090->9090/tcp
+blogcms-de7-promtail-1         grafana/promtail:3.4.2                                                    "/usr/bin/promtail -…"   promtail         6 minutes ago        Up 6 minutes                  
+blogcms-de7-web-1              blogcms-de7-web                                                           "docker-entrypoint.s…"   web              About a minute ago   Up About a minute (healthy)   3000/tcp, 9100/tcp

@@ -150,7 +150,31 @@ services:
     cap_drop: [ALL]
     read_only: true
     mem_limit: 64m
-
+  loki:
+    <<: *common
+    image: grafana/loki:3.4.2
+    command: ["-config.file=/etc/loki/config.yml"]
+    volumes:
+      - ./logging/loki.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+    networks: [monitoring]
+    cap_drop: [ALL]
+    mem_limit: 512m
+  promtail:
+    <<: *common
+    image: grafana/promtail:3.4.2
+    user: "10001:10001"
+    command: ["-config.file=/etc/promtail/config.yml"]
+    volumes:
+      - ./logging/promtail.yml:/etc/promtail/config.yml:ro
+      - app-logs:/logs/app:ro
+      - nginx-logs:/logs/nginx:ro
+    tmpfs: ["/tmp:uid=10001,gid=10001"]
+    read_only: true
+    cap_drop: [ALL]
+    networks: [monitoring]
+    depends_on: [loki]
+    mem_limit: 128m
 networks:
   frontend:
   backend:

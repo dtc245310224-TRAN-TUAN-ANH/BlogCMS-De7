@@ -1,0 +1,89 @@
+{
+  "time": "2026-10-20T14:32:11.789Z",
+  "targets": [
+    {
+      "job": "cadvisor",
+      "health": "up",
+      "lastError": ""
+    },
+    {
+      "job": "cms",
+      "health": "up",
+      "lastError": ""
+    },
+    {
+      "job": "loki",
+      "health": "up",
+      "lastError": ""
+    },
+    {
+      "job": "mysql",
+      "health": "up",
+      "lastError": ""
+    },
+    {
+      "job": "nginx",
+      "health": "up",
+      "lastError": ""
+    },
+    {
+      "job": "prometheus",
+      "health": "up",
+      "lastError": ""
+    },
+    {
+      "job": "promtail",
+      "health": "up",
+      "lastError": ""
+    }
+  ],
+  "metrics": {
+    "mysql_up": [
+      {
+        "metric": {
+          "__name__": "mysql_up",
+          "instance": "mysql-exporter:9104",
+          "job": "mysql"
+        },
+        "value": "1"
+      }
+    ],
+    "nginx_up": [
+      {
+        "metric": {
+          "__name__": "nginx_up",
+          "instance": "nginx-exporter:9113",
+          "job": "nginx"
+        },
+        "value": "1"
+      }
+    ],
+    "count(container_memory_working_set_bytes{image!=\"\"})": [
+      {
+        "metric": {},
+        "value": "12"
+      }
+    ],
+    "sum(cms_http_requests_total)": [
+      {
+        "metric": {},
+        "value": "35"
+      }
+    ]
+  },
+  "logql": {
+    "{job=\"nginx\"}": {
+      "entries": 5,
+      "sample": "{\"time\":\"2026-10-20T14:32:06+00:00\",\"method\":\"GET\",\"path\":\"/trang-khong-ton-tai\",\"status\":404,\"duration\":0.002}"
+    },
+    "{job=\"nginx\"} | json | status >= 400": {
+      "entries": 5,
+      "sample": "{\"time\":\"2026-10-20T14:31:50+00:00\",\"method\":\"GET\",\"path\":\"/api/admin/posts\",\"status\":401,\"duration\":0.001}"
+    },
+    "{job=\"cms\"} | json | event=\"login_failed\"": {
+      "entries": 1,
+      "sample": "{\"time\":\"2026-10-20T14:32:06.592Z\",\"event\":\"login_failed\"}"
+    }
+  },
+  "result": "PASS"
+}
