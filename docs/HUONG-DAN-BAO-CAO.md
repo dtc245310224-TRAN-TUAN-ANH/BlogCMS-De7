@@ -1,11 +1,10 @@
-# Báo cáo và thông tin cần điền
+# Báo cáo và thông tin nộp bài
 
-- `Bao-cao-De7-BlogCMS.pdf`: báo cáo 14 trang đã kiểm tra bố cục, có ảnh minh chứng thực tế.
-- `Bao-cao-chinh-sua.html`: bản nội dung có thể chỉnh sửa bằng VS Code. Giữ file trong thư mục docs để các ảnh ở ../evidence hiển thị đúng.
-- `report-content.json`: nội dung báo cáo dưới dạng dữ liệu để tái sử dụng.
+Sinh viên: **Trần Tuấn Anh** — **DTC245310224**.
+Repository: https://github.com/dtc245310224-TRAN-TUAN-ANH/BlogCMS-De7
 
-Trước khi nộp, thay các chỗ trong ngoặc vuông trên bìa: tên trường, khoa, họ tên, MSSV, lớp và giảng viên. Bổ sung URL GitHub thật sau khi push mã nguồn.
-
-Có thể mở bản HTML bằng Microsoft Word rồi lưu thành DOCX để chỉnh sửa. Cần kiểm tra lại ngắt trang, ảnh và mục lục khi chuyển định dạng. Hoặc sửa HTML trong VS Code, mở bằng trình duyệt và dùng Print → Save as PDF. Bản PDF xuất lại có thể khác số trang; bảo đảm ít nhất 10 trang sau khi chỉnh sửa.
-
-Các ảnh kiểm thử được chụp ngày 20/10/2026. Khi demo ở máy của mình, nên chụp thêm ảnh và cập nhật kết quả kiểm tra thực tế. Gói bàn giao chưa tạo tài khoản hoặc repository GitHub thay cho sinh viên.
+- Đọc `CAP-NHAT-NOP-BAI.md` để cập nhật báo cáo đang chỉnh trên Google Docs: GitHub đã push, mật khẩu phpMyAdmin đã đổi mạnh, ảnh LogQL mới và địa chỉ truy cập Grafana.
+- `Bao-cao-De7-BlogCMS.pdf`, `Bao-cao-chinh-sua.html`, `report-content.json` là bộ nội dung ban đầu ngày 20/10/2026, còn thông tin mẫu và trạng thái cũ. Giữ để tham khảo; không coi là bản nộp cuối.
+- Minh chứng mới có trong `evidence/logql-final-1.png` đến `logql-final-3.png`, `phpmyadmin-admin-final.png` và `verification-final.json`.
+- Báo cáo Google Docs hiện do sinh viên chỉnh trực tiếp. Sau khi thay ảnh, cần cập nhật mục lục, kiểm tra không tràn lề và xuất DOCX/PDF ít nhất 10 trang.
+- Điền lớp, giảng viên theo thông tin thật. Không chụp `.env` hoặc file secrets trong báo cáo, video hay ảnh đưa lên GitHub.

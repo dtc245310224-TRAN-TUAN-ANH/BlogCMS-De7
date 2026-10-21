@@ -1,5 +1,8 @@
 # Mạch Nguồn — Hệ thống Blog / CMS (Đề 7)
 
+- Sinh viên: **Trần Tuấn Anh** — MSSV: **DTC245310224**.
+- Repository: https://github.com/dtc245310224-TRAN-TUAN-ANH/BlogCMS-De7
+
 Ứng dụng Node.js + MySQL, giao diện tiếng Việt, triển khai bằng Docker Compose.
 6 bài viết ban đầu được biên soạn từ tài liệu Docker, Nginx, MySQL, Prometheus và OWASP; mỗi bài có nguồn chính thức.
 Đây là cấu hình thực hành trên máy cá nhân, các cổng chỉ mở tại `127.0.0.1`.
@@ -10,7 +13,15 @@ Yêu cầu: Docker Desktop **đang chạy Linux containers** (Windows cần WSL2
 Nên cấp Docker ít nhất 4 GB RAM, máy tính 8 GB RAM trở lên và khoảng 8 GB trống. Lần đầu cần Internet để tải image.
 Không cần cài Node.js hay MySQL trực tiếp trên Windows.
 
-1. Giải nén ZIP. Trong VS Code chọn **File → Open Folder → BlogCMS-De7** (thư mục chứa `compose.yaml`).
+1. Clone repository rồi mở thư mục chứa `compose.yaml` trong VS Code:
+
+```powershell
+git clone https://github.com/dtc245310224-TRAN-TUAN-ANH/BlogCMS-De7.git
+cd BlogCMS-De7
+code .
+```
+
+Nếu đã có dự án trên máy thì mở thư mục hiện tại; không clone thêm bên trong nó.
 2. Mở **Terminal → New Terminal**, dùng PowerShell:
 
 ```powershell
@@ -38,6 +49,16 @@ Mở `.env` trực tiếp trong VS Code để xem mật khẩu. **Không đưa `
 Trong Grafana: **Dashboards → Blog CMS → Blog CMS • Hệ thống và vận hành**.
 Chờ khoảng 1–2 phút để có mẫu dữ liệu; biểu thức rate cần ít nhất hai lần scrape.
 Loki và các exporter không mở cổng ra host.
+
+**Tài khoản quản trị database riêng (tùy chọn):** sau khi MySQL healthy, chạy:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\setup-db-admin.ps1
+```
+
+Script tạo hoặc đổi mật khẩu user `admin`, cấp quyền trên `blogcms` và lưu mật khẩu ngẫu nhiên trong `secrets/phpmyadmin-admin.txt` (bị Git bỏ qua). Dùng tài khoản này để quản lý cấu trúc database qua phpMyAdmin. Mỗi lần chạy script sẽ đổi mật khẩu; không cần chạy khi chỉ build lại web. Cài mới chưa chạy script này vẫn đăng nhập bằng `cms_app` nhưng chỉ có quyền CRUD dữ liệu. Tài khoản phpMyAdmin độc lập với tài khoản website. Bản demo ngày 21/10 đã đổi mật khẩu đơn giản sang mật khẩu mạnh.
+
+Các địa chỉ `http://prometheus:9090` và `http://loki:3100` trong datasource chỉ dùng giữa container. Người dùng mở Grafana tại `http://localhost:3000`, Prometheus tại `http://localhost:9090`; xem Loki qua **Grafana → Explore → Loki**.
 
 ## 2. Chức năng website
 
@@ -86,7 +107,7 @@ Grafana → Explore → chọn **Loki**, chọn **Last 15 minutes**, chạy:
 sum(count_over_time({job="nginx"} | json | status >= 400 [5m]))
 ```
 
-Tạo log 404 bằng cách mở `http://localhost:8080/trang-khong-ton-tai`.
+Tạo log 404 bằng cách mở `http://localhost:8080/api/khong-ton-tai`.
 Đăng nhập sai một lần để có `login_failed`. Không spam vì có rate limit.
 Nhãn `job` được khai báo cố định trong `logging/promtail.yml`; không cần đoán tên container.
 
@@ -151,26 +172,23 @@ Khôi phục vào một môi trường thử nghiệm trước; xem `docs/OPERAT
 
 ## 8. Git và GitHub
 
-Gói có lịch sử Git **3 commit** theo nhóm chức năng; file `source-history.bundle` ở ngoài thư mục mã nguồn chứa lịch sử để clone:
+Mã nguồn đã được đẩy lên repository công khai của sinh viên. Ba commit triển khai ban đầu:
+
+- `599786d`: CMS, MySQL, phpMyAdmin và Nginx reverse proxy.
+- `5ced0bd`: Prometheus, Grafana và giám sát container/web/database.
+- `7c1683d`: Loki, Promtail, hardening và tài liệu.
+- `e72d5fa`: cập nhật giao diện và sửa font tiếng Việt.
+
+Các commit sau ghi nhận thay đổi thực tế khi hoàn thiện. Ba commit ban đầu giữ tác giả `CMS Project Scaffold`; không sửa lịch sử để thay tác giả. Xem lịch sử tại:
+https://github.com/dtc245310224-TRAN-TUAN-ANH/BlogCMS-De7/commits/main/
 
 ```powershell
-git clone .\source-history.bundle BlogCMS-Git
-cd BlogCMS-Git
 git log --oneline
+git status
 ```
 
-Nếu dùng thư mục đã giải nén và có `.git`, không cần clone lại.
-Lịch sử scaffold ghi tác giả kỹ thuật `CMS Project Scaffold`, không giả danh sinh viên.
-Bạn cần tự điền tên/MSSV, tạo tài khoản GitHub theo MSSV và một repository rỗng của mình.
-Sau đó trong thư mục clone:
+Không cần `source-history.bundle` khi clone trực tiếp từ GitHub. Không đưa `.env`, `secrets/`, backup hoặc ảnh chứa mật khẩu lên repository. Kiểm tra `git status` trước mỗi commit; tuyệt đối không dùng `git add -f .env`.
 
-```powershell
-git config user.name "HO TEN CUA BAN"
-git config user.email "EMAIL GITHUB CUA BAN"
-git remote add origin https://github.com/TAI_KHOAN_MSSV/BlogCMS-De7.git
-git push -u origin main
-```
+## 9. Báo cáo và minh chứng nộp bài
 
-Thay các giá trị viết hoa bằng thông tin thật. Không copy tài khoản/họ tên sinh viên trong file mẫu.
-Repository GitHub chưa được tạo/push trong gói bàn giao này; URL trong báo cáo cần bạn bổ sung sau khi push.
-Các ảnh không chứa mật khẩu. Kiểm tra `git status` trước mỗi commit; tuyệt đối không dùng `git add -f .env`.
+Đọc `docs/HUONG-DAN-BAO-CAO.md` và `docs/CAP-NHAT-NOP-BAI.md` trước khi xuất bản báo cáo. PDF/HTML ban đầu trong docs là tài liệu tham khảo lịch sử, chưa phải báo cáo cá nhân cuối cùng. Báo cáo đang chỉnh trên Google Docs cần xuất lại sau khi cập nhật thông tin, ảnh và mục lục.

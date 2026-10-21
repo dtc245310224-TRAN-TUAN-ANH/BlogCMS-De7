@@ -4,10 +4,10 @@
 2. `docker compose ps`: chỉ ra 11 container. Mở Blog tại localhost:8080, tìm “MySQL”, lọc danh mục, đọc nguồn bài.
 3. Đăng nhập CMS bằng thông tin `.env` (không chiếu mật khẩu lên màn hình). Tạo bài nháp; tab ẩn danh không thấy bài. Xuất bản rồi kiểm tra lại; sửa/xóa bài thử.
 4. Tạo một biên tập viên và chỉ ra giới hạn quyền. Danh mục đang có bài không xóa được.
-5. Mở phpMyAdmin bằng cms_app, chọn blogcms, xem posts/categories/users/sessions. Không mở cột password_hash khi trình bày không cần thiết.
+5. Mở phpMyAdmin bằng admin nếu đã chạy scripts/setup-db-admin.ps1 (mật khẩu riêng trong secrets/phpmyadmin-admin.txt), hoặc dùng cms_app với quyền CRUD. Chọn blogcms, xem posts/categories/users/sessions. Không mở mật khẩu hoặc password_hash khi trình bày.
 6. `docker compose exec nginx nginx -t`; xem response headers với DevTools. Chỉ ra Nginx proxy tới web:3000, port 9100 chỉ dành cho metrics nội bộ.
 7. Mở Prometheus `/targets`: 7 target UP. Query `mysql_up`, `nginx_up`, `up`. Mở Grafana dashboard, tạo thêm HTTP traffic bằng refresh trang blog.
-8. Mở URL không tồn tại; đăng nhập sai một lần. Grafana Explore → Loki, thực hiện 3 LogQL trong README; chọn Last 15 minutes.
+8. Mở http://localhost:8080/api/khong-ton-tai; đăng nhập sai website một lần. Chờ 15 giây. Grafana Explore → Loki → Code, thực hiện riêng từng truy vấn trong README; chọn Last 15 minutes và bấm Run query. Chụp 3 ảnh có cả câu truy vấn và kết quả.
 9. `docker compose exec web id`; kiểm tra backend internal và port MySQL; chỉ ra cap_drop/read_only/CSRF. Nói rõ ngoại lệ privileged của cAdvisor.
 10. Trình bày backup, giới hạn HTTP local, Promtail EOL, dự định nâng cấp Alloy.
 
